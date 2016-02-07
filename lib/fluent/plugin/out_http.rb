@@ -86,10 +86,19 @@ class Fluent::HTTPOutput < Fluent::Output
   def create_request(tag, time, record)
     url = format_url(tag, time, record)
     uri = URI.parse(url)
-    req = Net::HTTP.const_get(@http_method.to_s.capitalize).new(uri.path)
+    uri.query = URI.encode_www_form({
+     'tag' => tag, 'time' => time 
+    })
+    req = Net::HTTP.const_get(@http_method.to_s.capitalize).new(uri.to_s)
     set_body(req, tag, time, record)
     set_header(req, tag, time, record)
     return req, uri
+
+    uri =  URI.parse("http://www.youtube.com/watch?v=og9B3BEnBHo")
+    
+    puts uri.to_s
+
+
   end
 
   def send_request(req, uri)    
